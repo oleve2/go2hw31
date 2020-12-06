@@ -45,15 +45,17 @@ func (s *Server) Init() error {
 		}
 		return s.securitySvc.HasAnyRole(ctx, userDetails, roles...)
 	}
-	adminRoleMd := authorizator.Authorizator(roleChecker, security.RoleAdmin)
-	userRoleMd := authorizator.Authorizator(roleChecker, security.RoleUser)
+	//adminRoleMd := authorizator.Authorizator(roleChecker, security.RoleAdmin)
+	//userRoleMd := authorizator.Authorizator(roleChecker, security.RoleUser)
 
 	s.router.Get("/echo", s.handleEcho)
 	s.router.Post("/api/users", s.handleRegister2)
 	s.router.Post("/tokens", s.handleTokens)
 
-	s.router.With(identificatorMd, authenticatorMd, adminRoleMd).Get("/cardsAdmin", s.handleCardsAdmin)
-	s.router.With(identificatorMd, authenticatorMd, userRoleMd).Get("/cards", s.handleCardsUser)
+	//s.router.With(identificatorMd, authenticatorMd, adminRoleMd).Get("/cardsAdmin", s.handleCardsAdmin)
+	//s.router.With(identificatorMd, authenticatorMd, userRoleMd).Get("/cards", s.handleCardsUser)
+
+	s.router.With(identificatorMd, authenticatorMd, authorizator.Authorizator(roleChecker, security.RoleAdmin, security.RoleUser)).Get("/cards", s.handleGetCards)
 
 	return nil
 }
@@ -162,6 +164,7 @@ func (s *Server) handleTokens(writer http.ResponseWriter, request *http.Request)
 }
 
 // ------------------------------------------------------------
+/*
 func (s *Server) handleCardsAdmin(writer http.ResponseWriter, request *http.Request) {
 	cards, err := s.businessSvc.GetAllCards(request.Context())
 	if err != nil {
@@ -188,4 +191,50 @@ func (s *Server) handleCardsUser(writer http.ResponseWriter, request *http.Reque
 	if err != nil {
 		log.Print(err)
 	}
+}
+*/
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+// общий хендлер
+func (s *Server) handleGetCards(writer http.ResponseWriter, request *http.Request) {
+	profile, err := getProfile(request.Context())
+	if err != nil {
+		writer.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// admin
+	if contains(profile.Roles, security.RoleAdmin) {
+		cards, err := s.businessSvc.GetAllCards(request.Context())
+		if err != nil {
+			log.Print(err)
+		}
+		err = web.WriteAsJSON(writer, cards)
+		if err != nil {
+			log.Print(err)
+		}
+		return
+	}
+
+	// user
+	if contains(profile.Roles, security.RoleUser) {
+		userCards, err := s.businessSvc.GetUserCards(request.Context(), profile.ID)
+		if err != nil {
+			log.Print(err)
+		}
+		err = web.WriteAsJSON(writer, userCards)
+		if err != nil {
+			log.Print(err)
+		}
+		return
+	}
+
 }

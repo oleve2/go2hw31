@@ -1,0 +1,47 @@
+
+# заведение нового пользователя
+curl -d "login=newbie&password=secret" -X POST http://0.0.0.0:9999/users
+curl -d "login=newadmin&password=newadmin" -X POST http://0.0.0.0:9999/users
+
+# login
+curl -d "login=newbie&password=secret" -X PUT http://0.0.0.0:9999/users
+
+# пройти на эндпоинт под токеном newbie
+curl \
+-H "Authorization: V57rbAEohslT5jYfh8KvSH1FQXUiqx2eS-rYievJayKXiJ2duTY1-BqREsd84Df31bD4BBQHLfoYI0LHPkdhXbWVX76K3SG2IYvlYeag5Sewyc6_RhZXLRCaM9-A_GBCJx9VacQigl7T85fmfg2NWhBr5_zIBit3WBJI7ojwcMzpeb817kvfGmFcR0DnZ_Ryyt-47euVuhlgq_dLqd6oqXHj-SNEp_OhQWcrr_RHzeItO1vAxzjgzFMqAsfVdj-JpIl_5rHNTCPULpGNjlTI4AI_gOPWcG1638wOMfKgT0-3nNdfmVcieJAVlo8hYTP7gqociZfPPfQ64fk8M5gX4g" \
+-X GET http://0.0.0.0:9999/user 
+
+
+
+# go2hw31
+<!-- 
+http://0.0.0.0:9999/api/users
+{
+  "login": "newadmin",
+  "password": "secret"
+}
+
+http://0.0.0.0:9999/tokens
+{
+  "login": "newadmin",
+  "password": "secret"
+}
+
+http://0.0.0.0:9999/cardsAdmin
+http://0.0.0.0:9999/cards
+(в хедере указать токен авторизации)
+
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -163,37 +163,6 @@ func (s *Server) handleTokens(writer http.ResponseWriter, request *http.Request)
 
 }
 
-// ------------------------------------------------------------
-/*
-func (s *Server) handleCardsAdmin(writer http.ResponseWriter, request *http.Request) {
-	cards, err := s.businessSvc.GetAllCards(request.Context())
-	if err != nil {
-		log.Print(err)
-	}
-	err = web.WriteAsJSON(writer, cards)
-	if err != nil {
-		log.Print(err)
-	}
-
-}
-
-func (s *Server) handleCardsUser(writer http.ResponseWriter, request *http.Request) {
-	profile, err := getProfile(request.Context())
-	if err != nil {
-		writer.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	userCards, err := s.businessSvc.GetUserCards(request.Context(), profile.ID)
-	if err != nil {
-		log.Print(err)
-	}
-	err = web.WriteAsJSON(writer, userCards)
-	if err != nil {
-		log.Print(err)
-	}
-}
-*/
-
 func contains(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
@@ -238,3 +207,34 @@ func (s *Server) handleGetCards(writer http.ResponseWriter, request *http.Reques
 	}
 
 }
+
+// ------------------------------------------------------------
+/*
+func (s *Server) handleCardsAdmin(writer http.ResponseWriter, request *http.Request) {
+	cards, err := s.businessSvc.GetAllCards(request.Context())
+	if err != nil {
+		log.Print(err)
+	}
+	err = web.WriteAsJSON(writer, cards)
+	if err != nil {
+		log.Print(err)
+	}
+
+}
+
+func (s *Server) handleCardsUser(writer http.ResponseWriter, request *http.Request) {
+	profile, err := getProfile(request.Context())
+	if err != nil {
+		writer.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	userCards, err := s.businessSvc.GetUserCards(request.Context(), profile.ID)
+	if err != nil {
+		log.Print(err)
+	}
+	err = web.WriteAsJSON(writer, userCards)
+	if err != nil {
+		log.Print(err)
+	}
+}
+*/

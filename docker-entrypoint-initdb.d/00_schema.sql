@@ -15,14 +15,6 @@ CREATE TABLE tokens (
     created  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- таблца платежей для go2hw23
-CREATE TABLE payments(
-    id BIGSERIAL PRIMARY KEY, -- записывайте UUID - автоинкремент
-    senderId INTEGER NOT NULL REFERENCES users,
-    amount INTEGER NOT NULL,
-    comment TEXT NOT NULL
-);
-
 -- таблца карт для go2hw31
 CREATE TABLE cards(
     id              BIGSERIAL PRIMARY KEY, -- записывайте UUID - автоинкремент
@@ -34,5 +26,16 @@ CREATE TABLE cards(
     user_id         INTEGER NOT NULL REFERENCES users,
     is_virtual      boolean NOT NULL
 );
+
+/*
+-- таблца платежей для go2hw23
+CREATE TABLE payments(
+    id BIGSERIAL PRIMARY KEY, -- записывайте UUID - автоинкремент
+    senderId INTEGER NOT NULL REFERENCES users,
+    amount INTEGER NOT NULL,
+    comment TEXT NOT NULL
+);
+*/
+
 
 

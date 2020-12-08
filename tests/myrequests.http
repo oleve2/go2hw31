@@ -15,17 +15,22 @@ curl \
 
 # go2hw31
 <!-- 
+1) завести новых пользователей
 http://0.0.0.0:9999/api/users
 {
   "login": "newadmin",
-  "password": "secret"
+  "password": "secretadmin"
+}
+{
+  "login": "vasyauser",
+  "password": "secretvasya"
 }
 
+
+2) получить на каждого токены
 http://0.0.0.0:9999/tokens
-{
-  "login": "newadmin",
-  "password": "secret"
-}
+
+
 
 http://0.0.0.0:9999/cardsAdmin
 http://0.0.0.0:9999/cards

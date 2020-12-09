@@ -53,7 +53,6 @@ func execute(addr string, dsn string) error {
 	}
 	defer pool.Close()
 
-	//offersSvc := offers.NewService(pool)
 	securitySvc := security.NewService(pool)
 	businessSvc := business.NewService(pool)
 	mux := chi.NewRouter()

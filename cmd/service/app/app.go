@@ -45,17 +45,14 @@ func (s *Server) Init() error {
 		}
 		return s.securitySvc.HasAnyRole(ctx, userDetails, roles...)
 	}
-	//adminRoleMd := authorizator.Authorizator(roleChecker, security.RoleAdmin)
-	//userRoleMd := authorizator.Authorizator(roleChecker, security.RoleUser)
-
 	s.router.Get("/echo", s.handleEcho)
 	s.router.Post("/api/users", s.handleRegister2)
 	s.router.Post("/tokens", s.handleTokens)
-
-	//s.router.With(identificatorMd, authenticatorMd, adminRoleMd).Get("/cardsAdmin", s.handleCardsAdmin)
-	//s.router.With(identificatorMd, authenticatorMd, userRoleMd).Get("/cards", s.handleCardsUser)
-
-	s.router.With(identificatorMd, authenticatorMd, authorizator.Authorizator(roleChecker, security.RoleAdmin, security.RoleUser)).Get("/cards", s.handleGetCards)
+	s.router.With(
+		identificatorMd,
+		authenticatorMd,
+		authorizator.Authorizator(roleChecker, security.RoleAdmin, security.RoleUser)).
+		Get("/cards", s.handleGetCards)
 
 	return nil
 }
@@ -66,7 +63,6 @@ func (s *Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 
 // ------------------------------------------------------------
 func (s *Server) handleEcho(writer http.ResponseWriter, request *http.Request) {
-	writer.Header().Set("Content-Type", "application/json")
 	_, err := writer.Write([]byte("this is echo page"))
 	if err != nil {
 		log.Print(err)
@@ -104,23 +100,27 @@ func (s *Server) handleRegister2(writer http.ResponseWriter, request *http.Reque
 	login := qparams.Login
 	if login == "" {
 		writer.WriteHeader(http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 	password := qparams.Password
 	if password == "" {
 		writer.WriteHeader(http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 
 	userID, err := s.securitySvc.Register2(request.Context(), login, password)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 	resp := map[string]int64{"id": *userID}
 	respJSON, err := json.Marshal(resp)
 	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
@@ -145,6 +145,7 @@ func (s *Server) handleTokens(writer http.ResponseWriter, request *http.Request)
 	token, err := s.securitySvc.Login(request.Context(), login, pass)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
+		log.Println(err)
 		return
 	}
 
@@ -152,6 +153,7 @@ func (s *Server) handleTokens(writer http.ResponseWriter, request *http.Request)
 	respBody, err := json.Marshal(data)
 	if err != nil {
 		writer.WriteHeader(http.StatusInternalServerError)
+		log.Println(err)
 		return
 	}
 
@@ -172,11 +174,11 @@ func contains(s []string, e string) bool {
 	return false
 }
 
-// общий хендлер
 func (s *Server) handleGetCards(writer http.ResponseWriter, request *http.Request) {
 	profile, err := getProfile(request.Context())
 	if err != nil {
 		writer.WriteHeader(http.StatusUnauthorized)
+		log.Println(err)
 		return
 	}
 
@@ -207,34 +209,3 @@ func (s *Server) handleGetCards(writer http.ResponseWriter, request *http.Reques
 	}
 
 }
-
-// ------------------------------------------------------------
-/*
-func (s *Server) handleCardsAdmin(writer http.ResponseWriter, request *http.Request) {
-	cards, err := s.businessSvc.GetAllCards(request.Context())
-	if err != nil {
-		log.Print(err)
-	}
-	err = web.WriteAsJSON(writer, cards)
-	if err != nil {
-		log.Print(err)
-	}
-
-}
-
-func (s *Server) handleCardsUser(writer http.ResponseWriter, request *http.Request) {
-	profile, err := getProfile(request.Context())
-	if err != nil {
-		writer.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-	userCards, err := s.businessSvc.GetUserCards(request.Context(), profile.ID)
-	if err != nil {
-		log.Print(err)
-	}
-	err = web.WriteAsJSON(writer, userCards)
-	if err != nil {
-		log.Print(err)
-	}
-}
-*/
